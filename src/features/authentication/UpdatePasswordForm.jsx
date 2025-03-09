@@ -13,15 +13,12 @@ function UpdatePasswordForm() {
   const { updateUser, isUpdating } = useUpdateUser();
 
   function onSubmit({ password }) {
-    updateUser({ password }, { onSuccess: reset });
+    updateUser({ password }, { onSuccess: () => reset() });
   }
 
   return (
     <Form onSubmit={handleSubmit(onSubmit)}>
-      <FormRow
-        label="Password (min 8 characters)"
-        error={errors?.password?.message}
-      >
+      <FormRow label="New password" error={errors?.password?.message}>
         <Input
           type="password"
           id="password"
@@ -29,9 +26,11 @@ function UpdatePasswordForm() {
           disabled={isUpdating}
           {...register("password", {
             required: "This field is required",
-            minLength: {
-              value: 8,
-              message: "Password needs a minimum of 8 characters",
+            pattern: {
+              value:
+                /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+              message:
+                "Password must be at least 8 characters long, contain at least one uppercase letter, one lowercase letter, one digit, and one special character",
             },
           })}
         />
